@@ -1,0 +1,27 @@
+FROM node:18-alpine
+WORKDIR /app
+
+# Copy Package-Files
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Copy App-Code
+COPY . .
+
+# Creating App-User and Gruppe
+RUN addgroup -g 1001 nodejs && \
+    adduser -S -u 1001 -G nodejs nodejs && \
+    chown -R nodejs:nodejs /app
+
+# Expose Port
+EXPOSE 3000
+
+# Health Check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+
+# change to nodejs User
+USER nodejs
+
+# start node.js
+CMD ["node", "app.js"]
