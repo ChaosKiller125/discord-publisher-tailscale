@@ -1,0 +1,24 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  discord-website-monitor:
+    build: .
+    container_name: discord-website-monitor
+    restart: unless-stopped
+    environment:
+      - DISCORD_TOKEN=
+      - CHANNEL_ID=
+      - WEBSITE_URL=
+      - CHECK_INTERVAL=300000
+      - CONTENT_SELECTOR=body
+    volumes:
+      - ./data:/app/data
+    networks:
+      - discord-bot-network
+
+networks:
+  discord-bot-network:
+    driver: bridge
+
+---
